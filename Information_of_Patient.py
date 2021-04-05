@@ -7,24 +7,24 @@ import sqlite3
 
 class Database:
     def __init__(self):
-        self.dbConnection = sqlite3.connect("patientdb.db")
+        self.dbConnection = sqlite3.connect("fek.db")
         self.dbCursor = self.dbConnection.cursor()
         self.dbCursor.execute(
-            "CREATE TABLE IF NOT EXISTS patient_table (id PRIMARYKEY text, firstname text, lastname text, dateOfBirth text, monthOfBirth text, yearOfBirth text, gender text, address text, contactNumber text, emailAddress text, bloodType text, history text, doctor text)")
+            "CREATE TABLE IF NOT EXISTS patient_table (id PRIMARYKEY text, firstname text, lastname text, dateOfBirth text, monthOfBirth text, yearOfBirth text, gender text, address text, contactNumber text, emailAddress text, bloodType text, history text, doctor text, bedOccupied)")
 
     def __del__(self):
         self.dbCursor.close()
         self.dbConnection.close()
 
-    def Insert(self, id, firstname, lastname, dateOfBirth, monthOfBirth, yearOfBirth, gender, address, contactNumber, emailAddress, bloodType, history, doctor):
-        self.dbCursor.execute("INSERT INTO patient_table VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (
-        id, firstname, lastname, dateOfBirth, monthOfBirth, yearOfBirth, gender, address, contactNumber, emailAddress, bloodType, history, doctor))
+    def Insert(self, id, firstname, lastname, dateOfBirth, monthOfBirth, yearOfBirth, gender, address, contactNumber, emailAddress, bloodType, history, doctor, bedOccupied):
+        self.dbCursor.execute("INSERT INTO patient_table VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (
+        id, firstname, lastname, dateOfBirth, monthOfBirth, yearOfBirth, gender, address, contactNumber, emailAddress, bloodType, history, doctor, bedOccupied))
         self.dbConnection.commit()
 
-    def Update(self, firstname, lastname, dateOfBirth, monthOfBirth, yearOfBirth, gender, address, contactNumber, emailAddress, bloodType, history, doctor, id):
+    def Update(self, firstname, lastname, dateOfBirth, monthOfBirth, yearOfBirth, gender, address, contactNumber, emailAddress, bloodType, history, doctor, id, bedOccupied):
         self.dbCursor.execute(
-            "UPDATE patient_table SET firstname = ?, lastname = ?, dateOfBirth = ?, monthOfBirth = ?, yearOfBirth = ?, gender = ?, address = ?, contactNumber = ?, emailAddress = ?, bloodType = ?, history = ?, doctor = ? WHERE id = ?",
-            (firstname, lastname, dateOfBirth, monthOfBirth, yearOfBirth, gender, address, contactNumber, emailAddress, bloodType, history, doctor, id))
+            "UPDATE patient_table SET firstname = ?, lastname = ?, dateOfBirth = ?, monthOfBirth = ?, yearOfBirth = ?, gender = ?, address = ?, contactNumber = ?, emailAddress = ?, bloodType = ?, bedOccupied = ?, history = ?, doctor = ? WHERE id = ?",
+            (firstname, lastname, dateOfBirth, monthOfBirth, yearOfBirth, gender, address, contactNumber, emailAddress, bloodType, bedOccupied, history, doctor, id))
         self.dbConnection.commit()
 
     def Search(self, id):
@@ -51,7 +51,7 @@ class Values:
             return "firstname"
         elif not (lastname.isalpha()):
             return "lastname"
-        elif not (contactNumber.isdigit() and (len(contactNumber) == 11)):
+        elif not (contactNumber.isdigit() and (len(contactNumber) == 10)):
             return "contactNumber"
         elif not (emailAdress.count("@") == 1 and emailAdress.count(".") > 0):
             return "emailAddress"
@@ -75,6 +75,7 @@ class InsertWindow:
         self.emailAddress = tkinter.StringVar()
         self.history = tkinter.StringVar()
         self.doctor = tkinter.StringVar()
+        self.bedOccupied = tkinter.StringVar()
 
         self.genderType = ["Male", "Female", "Transgender", "Other"]
         self.dateType = list(range(1, 32))
@@ -84,19 +85,20 @@ class InsertWindow:
         self.bloodListType = ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"]
 
         # Labels
-        tkinter.Label(self.window, fg=fg_color, bg=bg_color, text="Patient Id", font=("times new roman",10,"bold"), width=25).grid(pady=5, column=1, row=1)
-        tkinter.Label(self.window,  fg=fg_color, bg=bg_color, text="Patient First Name", font=("times new roman",10,"bold"), width=25).grid(pady=5, column=1, row=2)
-        tkinter.Label(self.window,  fg=fg_color, bg=bg_color, font=("times new roman",10,"bold"), text="Patient Last Name", width=25).grid(pady=5, column=1, row=3)
-        tkinter.Label(self.window, fg=fg_color, bg=bg_color, font=("times new roman",10,"bold"), text="Date of Birth", width=25).grid(pady=5, column=1, row=4)
-        tkinter.Label(self.window,  fg=fg_color, bg=bg_color, font=("times new roman",10,"bold"),text="Month of Birth", width=25).grid(pady=5, column=1, row=5)
-        tkinter.Label(self.window,  fg=fg_color, bg=bg_color, font=("times new roman",10,"bold"),text="Year of Birth", width=25).grid(pady=5, column=1, row=6)
-        tkinter.Label(self.window,  fg=fg_color, bg=bg_color, font=("times new roman",10,"bold"),text="Patient Gender", width=25).grid(pady=5, column=1, row=7)
-        tkinter.Label(self.window,  fg=fg_color, bg=bg_color, font=("times new roman",10,"bold"),text="Patient Address", width=25).grid(pady=5, column=1, row=8)
-        tkinter.Label(self.window,  fg=fg_color, bg=bg_color, font=("times new roman",10,"bold"),text="Patient Contact Number", width=25).grid(pady=5, column=1, row=9)
-        tkinter.Label(self.window,  fg=fg_color, bg=bg_color, font=("times new roman",10,"bold"),text="Patient Email Address", width=25).grid(pady=5, column=1, row=10)
-        tkinter.Label(self.window,  fg=fg_color, bg=bg_color, font=("times new roman",10,"bold"),text="Patient Blood Type", width=25).grid(pady=5, column=1, row=11)
-        tkinter.Label(self.window,  fg=fg_color, bg=bg_color, font=("times new roman",10,"bold"),text="History of Patient", width=25).grid(pady=5, column=1, row=12)
-        tkinter.Label(self.window,  fg=fg_color, bg=bg_color, font=("times new roman",10,"bold"),text="Name of Doctor", width=25).grid(pady=5, column=1, row=13)
+        tkinter.Label(self.window, fg=fg_color, bg=bg_color, text="Patient Id", font=("arial",10,"bold"), width=25).grid(pady=5, column=1, row=1)
+        tkinter.Label(self.window,  fg=fg_color, bg=bg_color, text="Patient First Name", font=("arial",10,"bold"), width=25).grid(pady=5, column=1, row=2)
+        tkinter.Label(self.window,  fg=fg_color, bg=bg_color, font=("arial",10,"bold"), text="Patient Last Name", width=25).grid(pady=5, column=1, row=3)
+        tkinter.Label(self.window, fg=fg_color, bg=bg_color, font=("arial",10,"bold"), text="Date of Birth", width=25).grid(pady=5, column=1, row=4)
+        tkinter.Label(self.window,  fg=fg_color, bg=bg_color, font=("arial",10,"bold"),text="Month of Birth", width=25).grid(pady=5, column=1, row=5)
+        tkinter.Label(self.window,  fg=fg_color, bg=bg_color, font=("arial",10,"bold"),text="Year of Birth", width=25).grid(pady=5, column=1, row=6)
+        tkinter.Label(self.window,  fg=fg_color, bg=bg_color, font=("arial",10,"bold"),text="Patient Gender", width=25).grid(pady=5, column=1, row=7)
+        tkinter.Label(self.window,  fg=fg_color, bg=bg_color, font=("arial",10,"bold"),text="Patient Address", width=25).grid(pady=5, column=1, row=8)
+        tkinter.Label(self.window,  fg=fg_color, bg=bg_color, font=("arial",10,"bold"),text="Patient Contact Number", width=25).grid(pady=5, column=1, row=9)
+        tkinter.Label(self.window,  fg=fg_color, bg=bg_color, font=("arial",10,"bold"),text="Patient Email Address", width=25).grid(pady=5, column=1, row=10)
+        tkinter.Label(self.window,  fg=fg_color, bg=bg_color, font=("arial",10,"bold"),text="Patient Blood Type", width=25).grid(pady=5, column=1, row=11)
+        tkinter.Label(self.window,  fg=fg_color, bg=bg_color, font=("arial",10,"bold"),text="History of Patient", width=25).grid(pady=5, column=1, row=12)
+        tkinter.Label(self.window,  fg=fg_color, bg=bg_color, font=("arial",10,"bold"),text="Name of Doctor", width=25).grid(pady=5, column=1, row=13)
+        tkinter.Label(self.window,  fg=fg_color, bg=bg_color, font=("arial",10,"bold"),text="Bed Occupied", width=25).grid(pady=5, column=1, row=14)
 
 
         self.idEntry = tkinter.Entry(self.window, width=25, textvariable=self.id)
@@ -107,6 +109,7 @@ class InsertWindow:
         self.emailAddressEntry = tkinter.Entry(self.window, width=25, textvariable=self.emailAddress)
         self.historyEntry = tkinter.Entry(self.window, width=25, textvariable=self.history)
         self.doctorEntry = tkinter.Entry(self.window, width=25, textvariable=self.doctor)
+        self.bedOccupied = tkinter.Entry(self.window, width=25, textvariable=self.bedOccupied)
 
         self.idEntry.grid(pady=5, column=3, row=1)
         self.firstnameEntry.grid(pady=5, column=3, row=2)
@@ -116,6 +119,7 @@ class InsertWindow:
         self.emailAddressEntry.grid(pady=5, column=3, row=10)
         self.historyEntry.grid(pady=5, column=3, row=12)
         self.doctorEntry.grid(pady=5, column=3, row=13)
+        self.bedOccupied.grid(pady=5, column=3, row=14)
 
         # Combobox widgets
         self.dateOfBirthBox = tkinter.ttk.Combobox(self.window, values=self.dateType, width=25)
@@ -131,11 +135,9 @@ class InsertWindow:
         self.bloodListBox.grid(pady=5, column=3, row=11)
 
         # Button widgets
-        tkinter.Button(self.window, width=10, fg=fg_color, bg=bg_color, font=("times new roman",10,"bold"), text="Insert", command=self.Insert).grid(pady=15, padx=5, column=1,
-                                                                                       row=14)
-        tkinter.Button(self.window, width=10, fg=fg_color, bg=bg_color, font=("times new roman",10,"bold"), text="Reset", command=self.Reset).grid(pady=15, padx=5, column=2, row=14)
-        tkinter.Button(self.window, width=10, fg=fg_color, bg=bg_color, font=("times new roman",10,"bold"), text="Close", command=self.window.destroy).grid(pady=15, padx=5, column=3,
-                                                                                              row=14)
+        tkinter.Button(self.window, width=10, fg=fg_color, bg=bg_color, font=("arial",10,"bold"), text="Insert", command=self.Insert).grid(pady=15, padx=5, column=1,row=15)
+        tkinter.Button(self.window, width=10, fg=fg_color, bg=bg_color, font=("arial",10,"bold"), text="Reset", command=self.Reset).grid(pady=15, padx=5, column=2, row=15)
+        tkinter.Button(self.window, width=10, fg=fg_color, bg=bg_color, font=("arial",10,"bold"), text="Close", command=self.window.destroy).grid(pady=15, padx=5, column=3, row=15)
 
         self.window.mainloop()
 
@@ -148,7 +150,7 @@ class InsertWindow:
             self.database.Insert(self.idEntry.get(), self.firstnameEntry.get(), self.lastnameEntry.get(), self.dateOfBirthBox.get(),
                                  self.monthOfBirthBox.get(), self.yearOfBirthBox.get(), self.genderBox.get(), self.addressEntry.get(),
                                  self.contactNumberEntry.get(), self.emailAddressEntry.get(), self.bloodListBox.get(),
-                                 self.historyEntry.get(), self.doctorEntry.get())
+                                 self.historyEntry.get(), self.doctorEntry.get(), self.bedOccupied.get())
             tkinter.messagebox.showinfo("Inserted data", "Successfully inserted the above data in the database")
         else:
             self.valueErrorMessage = "Invalid input in field " + self.test
@@ -167,7 +169,8 @@ class InsertWindow:
         self.emailAddressEntry.delete(0, tkinter.END)
         self.bloodListBox.set("")
         self.historyEntry.delete(0, tkinter.END)
-        self.doctorEntry.delete(0, tkinter.END)
+        self.doctorEntry.delete(0, tkinter.END)        
+        self.bedOccupied.delete(0, tkinter.END)
 
 
 class UpdateWindow:
@@ -196,32 +199,21 @@ class UpdateWindow:
         self.bloodListType = ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"]
 
         # Labels
-        tkinter.Label(self.window, fg=fg_color, bg=bg_color, text="Patient Id", font=("times new roman", 10, "bold"),
-                      width=25).grid(pady=5, column=1, row=1)
-        tkinter.Label(self.window, fg=fg_color, bg=bg_color, text="Patient First Name",
-                      font=("times new roman", 10, "bold"), width=25).grid(pady=5, column=1, row=2)
-        tkinter.Label(self.window, fg=fg_color, bg=bg_color, font=("times new roman", 10, "bold"),
-                      text="Patient Last Name", width=25).grid(pady=5, column=1, row=3)
-        tkinter.Label(self.window, fg=fg_color, bg=bg_color, font=("times new roman", 10, "bold"), text="Date of Birth",
-                      width=25).grid(pady=5, column=1, row=4)
-        tkinter.Label(self.window, fg=fg_color, bg=bg_color, font=("times new roman", 10, "bold"),
-                      text="Month of Birth", width=25).grid(pady=5, column=1, row=5)
-        tkinter.Label(self.window, fg=fg_color, bg=bg_color, font=("times new roman", 10, "bold"), text="Year of Birth",
-                      width=25).grid(pady=5, column=1, row=6)
-        tkinter.Label(self.window, fg=fg_color, bg=bg_color, font=("times new roman", 10, "bold"),
-                      text="Patient Gender", width=25).grid(pady=5, column=1, row=7)
-        tkinter.Label(self.window, fg=fg_color, bg=bg_color, font=("times new roman", 10, "bold"),
-                      text="Patient Address", width=25).grid(pady=5, column=1, row=8)
-        tkinter.Label(self.window, fg=fg_color, bg=bg_color, font=("times new roman", 10, "bold"),
-                      text="Patient Contact Number", width=25).grid(pady=5, column=1, row=9)
-        tkinter.Label(self.window, fg=fg_color, bg=bg_color, font=("times new roman", 10, "bold"),
-                      text="Patient Email Address", width=25).grid(pady=5, column=1, row=10)
-        tkinter.Label(self.window, fg=fg_color, bg=bg_color, font=("times new roman", 10, "bold"),
-                      text="Patient Blood Type", width=25).grid(pady=5, column=1, row=11)
-        tkinter.Label(self.window, fg=fg_color, bg=bg_color, font=("times new roman", 10, "bold"),
-                      text="History of Patient", width=25).grid(pady=5, column=1, row=12)
-        tkinter.Label(self.window, fg=fg_color, bg=bg_color, font=("times new roman", 10, "bold"),
-                      text="Name of Doctor", width=25).grid(pady=5, column=1, row=13)
+        tkinter.Label(self.window, fg=fg_color, bg=bg_color, text="Patient Id", font=("arial", 10, "bold"),width=25).grid(pady=5, column=1, row=1)
+        tkinter.Label(self.window, fg=fg_color, bg=bg_color, text="Patient First Name",font=("arial", 10, "bold"), width=25).grid(pady=5, column=1, row=2)
+        tkinter.Label(self.window, fg=fg_color, bg=bg_color, font=("arial", 10, "bold"),text="Patient Last Name", width=25).grid(pady=5, column=1, row=3)
+        tkinter.Label(self.window, fg=fg_color, bg=bg_color, font=("arial", 10, "bold"),text="Date of Birth", width=25).grid(pady=5, column=1, row=4)
+        tkinter.Label(self.window, fg=fg_color, bg=bg_color, font=("arial", 10, "bold"),text="Month of Birth", width=25).grid(pady=5, column=1, row=5)
+        tkinter.Label(self.window, fg=fg_color, bg=bg_color, font=("arial", 10, "bold"),text="Year of Birth", width=25).grid(pady=5, column=1, row=6)
+        tkinter.Label(self.window, fg=fg_color, bg=bg_color, font=("arial", 10, "bold"),text="Patient Gender", width=25).grid(pady=5, column=1, row=7)
+        tkinter.Label(self.window, fg=fg_color, bg=bg_color, font=("arial", 10, "bold"),text="Patient Address", width=25).grid(pady=5, column=1, row=8)
+        tkinter.Label(self.window, fg=fg_color, bg=bg_color, font=("arial", 10, "bold"),text="Patient Contact Number", width=25).grid(pady=5, column=1, row=9)
+        tkinter.Label(self.window, fg=fg_color, bg=bg_color, font=("arial", 10, "bold"),text="Patient Email Address", width=25).grid(pady=5, column=1, row=10)
+        tkinter.Label(self.window, fg=fg_color, bg=bg_color, font=("arial", 10, "bold"),text="Patient Blood Type", width=25).grid(pady=5, column=1, row=11)
+        tkinter.Label(self.window, fg=fg_color, bg=bg_color, font=("arial", 10, "bold"),text="History of Patient", width=25).grid(pady=5, column=1, row=12)
+        tkinter.Label(self.window, fg=fg_color, bg=bg_color, font=("arial", 10, "bold"),text="Name of Doctor", width=25).grid(pady=5, column=1, row=13)
+        tkinter.Label(self.window,  fg=fg_color, bg=bg_color, font=("arial",10,"bold"),text="Bed Occupied", width=25).grid(pady=5, column=1, row=14)
+
 
         # Set previous values
         self.database = Database()
@@ -239,6 +231,7 @@ class UpdateWindow:
         tkinter.Label(self.window, text=self.searchResults[0][10], width=25).grid(pady=5, column=2, row=11)
         tkinter.Label(self.window, text=self.searchResults[0][11], width=25).grid(pady=5, column=2, row=12)
         tkinter.Label(self.window, text=self.searchResults[0][12], width=25).grid(pady=5, column=2, row=13)
+        tkinter.Label(self.window, text=self.searchResults[0][12], width=25).grid(pady=5, column=2, row=14)
 
 
         self.idEntry = tkinter.Entry(self.window, width=25, textvariable=self.id)
@@ -249,6 +242,7 @@ class UpdateWindow:
         self.emailAddressEntry = tkinter.Entry(self.window, width=25, textvariable=self.emailAddress)
         self.historyEntry = tkinter.Entry(self.window, width=25, textvariable=self.history)
         self.doctorEntry = tkinter.Entry(self.window, width=25, textvariable=self.doctor)
+        self.bedOccupied = tkinter.Entry(self.window, width=25, textvariable=self.bedOccupied)
 
         self.idEntry.grid(pady=5, column=3, row=1)
         self.firstnameEntry.grid(pady=5, column=3, row=2)
@@ -258,6 +252,7 @@ class UpdateWindow:
         self.emailAddressEntry.grid(pady=5, column=3, row=10)
         self.historyEntry.grid(pady=5, column=3, row=12)
         self.doctorEntry.grid(pady=5, column=3, row=13)
+        self.bedOccupied.grid(pady=5, column=3, row=14)
 
         # Combobox
         self.dateOfBirthBox = tkinter.ttk.Combobox(self.window, values=self.dateType, width=20)
@@ -273,14 +268,9 @@ class UpdateWindow:
         self.bloodListBox.grid(pady=5, column=3, row=11)
 
         # Button
-        tkinter.Button(self.window, width=10, fg=fg_color, bg=bg_color, font=("times new roman", 10, "bold"),
-                       text="Update", command=self.Update).grid(pady=15, padx=5, column=1,
-                                                                row=14)
-        tkinter.Button(self.window, width=10, fg=fg_color, bg=bg_color, font=("times new roman", 10, "bold"),
-                       text="Reset", command=self.Reset).grid(pady=15, padx=5, column=2, row=14)
-        tkinter.Button(self.window, width=10, fg=fg_color, bg=bg_color, font=("times new roman", 10, "bold"),
-                       text="Close", command=self.window.destroy).grid(pady=15, padx=5, column=3,
-                                                                       row=14)
+        tkinter.Button(self.window, width=10, fg=fg_color, bg=bg_color, font=("arial", 10, "bold"),text="Update", command=self.Update).grid(pady=15, padx=5, column=1, row=15)
+        tkinter.Button(self.window, width=10, fg=fg_color, bg=bg_color, font=("arial", 10, "bold"),text="Reset", command=self.Reset).grid(pady=15, padx=5, column=2, row=15)
+        tkinter.Button(self.window, width=10, fg=fg_color, bg=bg_color, font=("arial", 10, "bold"),text="Close", command=self.window.destroy).grid(pady=15, padx=5, column=3, row=15)
 
         self.window.mainloop()
 
@@ -289,7 +279,7 @@ class UpdateWindow:
         self.database.Update(self.firstnameEntry.get(), self.lastnameEntry.get(), self.dateOfBirthBox.get(), self.monthOfBirthBox.get(),
                              self.yearOfBirthBox.get(), self.genderBox.get(), self.addressEntry.get(), self.contactNumberEntry.get(),
                              self.emailAddressEntry.get(), self.bloodListBox.get(), self.historyEntry.get(),
-                             self.doctorEntry.get(), self.id)
+                             self.doctorEntry.get(), self.bedOccupied.get(), self.id)
         tkinter.messagebox.showinfo("Updated data", "Successfully updated the above data in the database")
 
     def Reset(self):
@@ -306,6 +296,7 @@ class UpdateWindow:
         self.bloodListBox.set("")
         self.historyEntry.delete(0, tkinter.END)
         self.doctorEntry.delete(0, tkinter.END)
+        self.bedOccupied.delete(0, tkinter.END)
 
 
 class DatabaseView:
@@ -337,6 +328,7 @@ class DatabaseView:
         self.databaseView.heading("bloodType", text="Blood Type")
         self.databaseView.heading("history", text="History")
         self.databaseView.heading("doctor", text="Doctor")
+        self.databaseView.heading("bedOccupied", text="Bed Occupied")
 
         # Treeview columns
         self.databaseView.column("id", width=100)
@@ -352,6 +344,7 @@ class DatabaseView:
         self.databaseView.column("bloodType", width=100)
         self.databaseView.column("history", width=100)
         self.databaseView.column("doctor", width=100)
+        self.databaseView.column("bedOccupied", width=100)
 
         for record in data:
             self.databaseView.insert('', 'end', values=(record))
@@ -381,9 +374,9 @@ class SearchDeleteWindow:
 
         # Button widgets
         if (task == "Search"):
-            tkinter.Button(window, width=20, text=task, command=self.Search).grid(pady=15, padx=5, column=1, row=14)
+            tkinter.Button(window, width=20, text=task, command=self.Search).grid(pady=15, padx=5, column=1, row=15)
         elif (task == "Delete"):
-            tkinter.Button(window, width=20, text=task, command=self.Delete).grid(pady=15, padx=5, column=1, row=14)
+            tkinter.Button(window, width=20, text=task, command=self.Delete).grid(pady=15, padx=5, column=1, row=15)
 
     def Search(self):
         self.database = Database()
@@ -402,17 +395,14 @@ class HomePage:
         bg_color = "blue"
         fg_color = "white"
         lbl_color = 'GREEN'
-        tkinter.Label(self.homePageWindow, relief=tkinter.GROOVE, fg=fg_color, bg=bg_color, text="Home Page", font=("times new roman",20,"bold"), width=30).grid(pady=20, column=1, row=1)
+        tkinter.Label(self.homePageWindow, relief=tkinter.GROOVE, fg=fg_color, bg=bg_color, text="Home Page", font=("arial",20,"bold"), width=30).grid(pady=20, column=1, row=1)
 
-        tkinter.Button(self.homePageWindow, width=20, relief=tkinter.GROOVE, fg=fg_color, bg=bg_color, text="Insert", font=("times new roman",15,"bold"), command=self.Insert).grid(pady=15, column=1, row=2)
-        tkinter.Button(self.homePageWindow, width=20, relief=tkinter.GROOVE, fg=fg_color, bg=bg_color, text="Update", font=("times new roman",15,"bold"), command=self.Update).grid(pady=15, column=1, row=3)
-        tkinter.Button(self.homePageWindow, width=20, relief=tkinter.GROOVE, fg=fg_color, bg=bg_color, text="Search", font=("times new roman",15,"bold"), command=self.Search).grid(pady=15, column=1, row=4)
-        tkinter.Button(self.homePageWindow, width=20, relief=tkinter.GROOVE, fg=fg_color, bg=bg_color, text="Delete", font=("times new roman",15,"bold"), command=self.Delete).grid(pady=15, column=1, row=5)
-        tkinter.Button(self.homePageWindow, width=20, relief=tkinter.GROOVE, fg=fg_color, bg=bg_color, text="Display", font=("times new roman",15,"bold"), command=self.Display).grid(pady=15, column=1,
-                                                                                                 row=6)
-        tkinter.Button(self.homePageWindow, width=20, relief=tkinter.GROOVE, fg=fg_color, bg=bg_color, text="Exit", font=("times new roman",15,"bold"), command=self.homePageWindow.destroy).grid(pady=15,
-                                                                                                             column=1,
-                                                                                                             row=7)
+        tkinter.Button(self.homePageWindow, width=20, relief=tkinter.GROOVE, fg=fg_color, bg=bg_color, text="Insert", font=("arial",15,"bold"), command=self.Insert).grid(pady=15, column=1, row=2)
+        tkinter.Button(self.homePageWindow, width=20, relief=tkinter.GROOVE, fg=fg_color, bg=bg_color, text="Update", font=("arial",15,"bold"), command=self.Update).grid(pady=15, column=1, row=3)
+        tkinter.Button(self.homePageWindow, width=20, relief=tkinter.GROOVE, fg=fg_color, bg=bg_color, text="Search", font=("arial",15,"bold"), command=self.Search).grid(pady=15, column=1, row=4)
+        tkinter.Button(self.homePageWindow, width=20, relief=tkinter.GROOVE, fg=fg_color, bg=bg_color, text="Delete", font=("arial",15,"bold"), command=self.Delete).grid(pady=15, column=1, row=5)
+        tkinter.Button(self.homePageWindow, width=20, relief=tkinter.GROOVE, fg=fg_color, bg=bg_color, text="Display", font=("arial",15,"bold"), command=self.Display).grid(pady=15, column=1, row=6)
+        tkinter.Button(self.homePageWindow, width=20, relief=tkinter.GROOVE, fg=fg_color, bg=bg_color, text="Exit", font=("arial",15,"bold"), command=self.homePageWindow.destroy).grid(pady=15, column=1, row=7)
 
         self.homePageWindow.mainloop()
 
