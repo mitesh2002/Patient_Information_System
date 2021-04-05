@@ -7,7 +7,7 @@ import sqlite3
 
 class Database:
     def __init__(self):
-        self.dbConnection = sqlite3.connect("fek.db")
+        self.dbConnection = sqlite3.connect("patientdata.db")
         self.dbCursor = self.dbConnection.cursor()
         self.dbCursor.execute(
             "CREATE TABLE IF NOT EXISTS patient_table (id PRIMARYKEY text, firstname text, lastname text, dateOfBirth text, monthOfBirth text, yearOfBirth text, gender text, address text, contactNumber text, emailAddress text, bloodType text, history text, doctor text, bedOccupied)")
